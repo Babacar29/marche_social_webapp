@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "490717525694",
+    "project_id": "marche-social",
+    "storage_bucket": "marche-social.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490717525694:android:e42937978572f1b8d010ef",
+        "android_client_info": {
+          "package_name": "com.example.marche_social_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490717525694-kn5c20t2asva5a7ljiua8b5igqt7gagk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.marche_social_app",
+            "certificate_hash": "3363e40a82d66f8a03a06b784661e4a419bb412b"
+          }
+        },
+        {
+          "client_id": "490717525694-d36ipib28r7fnduttlrqeqofhqd3ms3u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCav0f9t36DzdnisV9FwHIOlgk3qw3LF9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490717525694-d36ipib28r7fnduttlrqeqofhqd3ms3u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "490717525694-2dpqmkt38pk18q12erhnni6bvftonojl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.marcheSocialApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
