@@ -55,7 +55,6 @@ lib/constants/stripeConsts.dart
 #android/fastlane/metadata/
 # assets/.env
 # Web related
-lib/generated_plugin_registrant.dart
 #android/findme_key.jks
 assets/.env
 

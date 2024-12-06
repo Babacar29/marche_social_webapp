@@ -1,9 +1,6 @@
 import 'package:marche_social_webapp/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
-
-
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

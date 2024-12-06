@@ -40,7 +40,6 @@ class SellerOrderController extends GetxController {
         }
         instantDeliveryOrders.value = temp;
       }
-      //debugPrint("Orders ========+>$allOrders");
     });
 
     //debugPrint("Orders ========+>$instantDeliveryOrders");

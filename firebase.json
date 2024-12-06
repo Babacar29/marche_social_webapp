@@ -1,19 +1,55 @@
 {
-  "flutter":
-  {"platforms":
-  {"android":{"default":{"projectId":"marche-social","appId":"1:490717525694:android:e42937978572f1b8d010ef","fileOutput":"android/app/google-services.json"}},
-    "ios":{"default":{"projectId":"marche-social","appId":"1:490717525694:ios:0773199b19d2f9afd010ef","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},
-    "macos":{"default":{"projectId":"marche-social","appId":"1:490717525694:ios:0773199b19d2f9afd010ef","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},
-    "dart":
-    {"lib/firebase_options.dart":
-    {"projectId":"marche-social",
-      "configurations":
-      {
-        "android":"1:490717525694:android:e42937978572f1b8d010ef",
-        "ios":"1:490717525694:ios:0773199b19d2f9afd010ef",
-        "macos":"1:490717525694:ios:0773199b19d2f9afd010ef",
-        "web":"1:490717525694:web:4e795dfb96af87bbd010ef",
-        "windows":"1:490717525694:web:2655568772d4d7f2d010ef"}}}
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "marche-social",
+          "appId": "1:490717525694:android:e42937978572f1b8d010ef",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "marche-social",
+          "appId": "1:490717525694:ios:0773199b19d2f9afd010ef",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "marche-social",
+          "appId": "1:490717525694:ios:0773199b19d2f9afd010ef",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "marche-social",
+          "configurations": {
+            "android": "1:490717525694:android:e42937978572f1b8d010ef",
+            "ios": "1:490717525694:ios:0773199b19d2f9afd010ef",
+            "macos": "1:490717525694:ios:0773199b19d2f9afd010ef",
+            "web": "1:490717525694:web:4e795dfb96af87bbd010ef",
+            "windows": "1:490717525694:web:2655568772d4d7f2d010ef"
+          }
+        }
+      }
     }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

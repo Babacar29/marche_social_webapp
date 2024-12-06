@@ -1,14 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:marche_social_webapp/core/constants/color_constants.dart';
 import 'package:marche_social_webapp/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../controllers/buyer/buyer_profile_controller.dart';
 import '../../../controllers/seller/seller_order_controller.dart';
+import '../../../controllers/seller/seller_profile_controller.dart';
 import '../../../controllers/seller/seller_store_controller.dart';
 import '../../../core/constants/app_collections.dart';
-import '../../../models/order_model.dart';
 import '../../../models/store_model.dart';
 import '../../login/login_screen.dart';
 
@@ -138,7 +137,7 @@ class ProfileCard extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => Login(title: 'Wellcome to the Admin & Dashboard Panel',)),
               );
             },
-            icon: Icon(Icons.logout)
+            icon: const Icon(Icons.logout)
         ),
       ],
     );
@@ -157,22 +156,22 @@ class SearchField extends StatefulWidget {
 class _SearchFieldState extends State<SearchField> {
   String searchQuery = '';
   SellerOrderController soController = Get.find<SellerOrderController>();
+  SellerProfileController sController = Get.find<SellerProfileController>();
+  BuyerProfileController buyerController = Get.find<BuyerProfileController>();
+  SellerStoreController sellerStoreController = Get.find<SellerStoreController>();
 
-  void updateSearchQuery(String query) {
-    setState(() {
-      searchQuery = query;
-    });
-
-    soController.instantDeliveryOrders.value = soController.instantDeliveryOrders.toSet().where((order) =>
-    order.cartItem!.productName!.toLowerCase().contains(searchQuery.toLowerCase())
-        ||  order.totalPrice!.toString().toLowerCase().contains(searchQuery.toLowerCase())
-        || order.orderStatus.toString().toLowerCase().contains(searchQuery.toLowerCase())
-    ).toList();
+  void searchPending(String status) {
+    soController.instantDeliveryOrders.value = soController.instantDeliveryOrders.where((order){
+      sController.getStoreInfo(uid: order.cartItem!.storeOwnerId!);
+      buyerController.getBuyerInfo(uid: order.customerId!);
+      sellerStoreController.getStoreInfo(ownerId: order.cartItem!.storeOwnerId ?? "");
+      return order.orderStatus! == status;
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return /*TextField(
       onChanged: (query){
         if(query.isEmpty){
           setState(() {
@@ -190,7 +189,7 @@ class _SearchFieldState extends State<SearchField> {
           borderSide: BorderSide.none,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
-        /*suffixIcon: InkWell(
+        *//*suffixIcon: InkWell(
           onTap: () {
             if(searchQuery.isEmpty){
               setState(() {
@@ -211,7 +210,55 @@ class _SearchFieldState extends State<SearchField> {
 
             ),
           ),
-        ),*/
+        ),*//*
+      ),
+    )*/
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          buildInkWell(
+              text: "En cours",
+              onTap: (){
+                searchPending("Pending");
+              }
+          ),
+          buildInkWell(
+              text: "Pending",
+              onTap: (){
+                searchPending("");
+              }
+          ),
+          buildInkWell(
+              text: "Tout",
+              onTap: (){
+                soController.getInstantDeliveryOrders();
+              }
+          ),
+        ],
+      );
+  }
+
+  InkWell buildInkWell({required String text, required GestureTapCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(10)
+        ),
+        //width: 120,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 14
+            ),
+          ),
+        ),
       ),
     );
   }

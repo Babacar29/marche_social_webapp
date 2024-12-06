@@ -290,17 +290,14 @@ class SellerStoreController extends GetxController {
     }
   }
 
-  Future getStoreInfo() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      StoreModel? temp = await getStoreByOwnerId(
-          ownerId: FirebaseAuth.instance.currentUser!.uid.toString());
-      if (temp != null) {
-        storeModel.value = temp;
-        debugPrint("store data ===========>${temp.minTimeSchedule}");
-        getProducts();
-      } else {
-        storeModel.value = null;
-      }
+  Future getStoreInfo({required String ownerId}) async {
+    StoreModel? temp = await getStoreByOwnerId(ownerId: ownerId);
+    if (temp != null) {
+      storeModel.value = temp;
+      //debugPrint("store data ===========>${temp.minTimeSchedule}");
+      //getProducts();
+    } else {
+      storeModel.value = null;
     }
   }
 
@@ -593,7 +590,7 @@ class SellerStoreController extends GetxController {
 
   @override
   void onInit() {
-    getStoreInfo();
+    //getStoreInfo();
     super.onInit();
   }
 
