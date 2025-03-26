@@ -48,7 +48,7 @@ final List<CalendarData> calendarData = [
   ),
   CalendarData(
     name: 'Fletcher Robson',
-    date: DateTime.now().add(Duration(days: -18, hours: 9)),
+    date: DateTime.now().add(const Duration(days: -18, hours: 9)),
     position: "Line Manager",
     rating: '\$',
   ),

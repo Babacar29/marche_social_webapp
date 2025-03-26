@@ -33,15 +33,18 @@ class AuthController extends GetxController{
     debugPrint("current user ================>${auth.currentUser}");
     if (auth.currentUser != null) {
       //
-
       String userId = auth.currentUser!.uid.toString();
+
+      //debugPrint("user id ================>$userId");
+
       try {
         DocumentSnapshot snap =
         await AppCollections.userCollection.doc(userId).get();
         UserModel userModel = UserModel.fromMap(snap);
+
         if (userModel.currentRole != null &&
             userModel.currentRole!.isNotEmpty &&
-            (userModel.currentRole!) == 'admin') {
+            (userModel.currentRole!) == 'admin' || (userModel.currentRole!) == "delivery_agent") {
           //Utils.hideProgressDialog();
           Navigator.push(
             context,

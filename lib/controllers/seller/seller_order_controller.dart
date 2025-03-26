@@ -11,7 +11,10 @@ import '../../models/store_model.dart';
 class SellerOrderController extends GetxController {
   RxList<OrderModel> allOrders = <OrderModel>[].obs;
   RxList<OrderModel> completedOrders = <OrderModel>[].obs;
+  RxList<OrderModel> onGoingOrders = <OrderModel>[].obs;
   RxList<OrderModel> pendingOrders = <OrderModel>[].obs;
+  RxList<OrderModel> deliveredOrders = <OrderModel>[].obs;
+  RxList<OrderModel> cancelledOrders = <OrderModel>[].obs;
   RxList<OrderModel> pendingValidationOrders = <OrderModel>[].obs;
   RxList<OrderModel> instantDeliveryOrders = <OrderModel>[].obs;
   RxList<OrderModel> validatedOrders = <OrderModel>[].obs;
@@ -23,18 +26,13 @@ class SellerOrderController extends GetxController {
   Future<void> getOrders() async {
 
     sellerChatStream = AppCollections.ordersCollection
-        //.where('storeId', isEqualTo: storeModel.value!.storeId ?? '')
-        //.where('storeId', isEqualTo: 'c8d2e700-adab-4913-b331-46ba2cbb843c')
         .snapshots()
         .listen((event) {
       List<OrderModel> temp = [];
-      List<OrderModel> validated = [];
-      List<OrderModel> pendingValidation = [];
-      Map<String, List<OrderModel>> groupedOrders = {};
       for (var element in event.docs) {
 
         OrderModel order = OrderModel.fromMap(element);
-        if(order.cartItem?.selectedDeliveryMethod == "Instant Delivery"){
+        if(order.cartItem?.selectedDeliveryMethod == "Instant Delivery" && order.orderStatus != "Cancelled" && order.orderStatus != "Completed" && order.orderStatus != "Delivered"){
           //pendingValidation.add(order);
           temp.add(OrderModel.fromMap(element));
         }
@@ -42,8 +40,38 @@ class SellerOrderController extends GetxController {
       }
     });
 
-    //debugPrint("Orders ========+>$instantDeliveryOrders");
+  }
 
+  Future<void> getDeliveredOrders() async {
+    sellerChatStream = AppCollections.ordersCollection
+        .snapshots()
+        .listen((event) {
+      List<OrderModel> temp = [];
+      for (var element in event.docs) {
+
+        OrderModel order = OrderModel.fromMap(element);
+        if(order.cartItem?.selectedDeliveryMethod == "Instant Delivery" && order.orderStatus == "Delivered"){
+          temp.add(OrderModel.fromMap(element));
+        }
+        deliveredOrders.value = temp;
+      }
+    });
+  }
+
+  Future<void> getCancelledOrders() async {
+    sellerChatStream = AppCollections.ordersCollection
+        .snapshots()
+        .listen((event) {
+      List<OrderModel> temp = [];
+      for (var element in event.docs) {
+
+        OrderModel order = OrderModel.fromMap(element);
+        if(order.cartItem?.selectedDeliveryMethod == "Instant Delivery" && order.orderStatus == "Cancelled"){
+          temp.add(OrderModel.fromMap(element));
+        }
+        cancelledOrders.value = temp;
+      }
+    });
   }
 
   String getGrossAmount() {
@@ -85,6 +113,18 @@ class SellerOrderController extends GetxController {
 
     completedOrders.value = data;
     return total.toString();
+  }
+
+  void getOnGoingOrders() {
+    List<OrderModel> temp = List.from(instantDeliveryOrders);
+    List<OrderModel> data = [];
+    for (var element in temp) {
+      if (element.orderStatus.toString() != "Completed" && element.orderStatus.toString() != "Cancelled") {
+        data.add(element);
+      }
+    }
+
+    onGoingOrders.value = data;
   }
 
   String getCancelledOrdersLength() {
@@ -175,6 +215,7 @@ class SellerOrderController extends GetxController {
     getStoreInfo();
     getCompletedOrderLength();
     getPendingOrdersLength();
+    getOnGoingOrders();
     super.onInit();
   }
 }

@@ -14,18 +14,18 @@ import '../../../core/constants/app_collections.dart';
 import '../../../core/utils/Utils.dart';
 import '../../../responsive.dart';
 
-class RecentUsers extends StatefulWidget {
-  const RecentUsers({
-    Key? key,
-    required this.orders
-  }) : super(key: key);
-  final List<OrderModel> orders;
+class InstantDeliveryOrders extends StatefulWidget {
+  const InstantDeliveryOrders({
+    super.key,
+    this.orders
+  });
+  final List<OrderModel>? orders;
 
   @override
-  State<RecentUsers> createState() => _RecentUsersState();
+  State<InstantDeliveryOrders> createState() => _InstantDeliveryOrdersState();
 }
 
-class _RecentUsersState extends State<RecentUsers> {
+class _InstantDeliveryOrdersState extends State<InstantDeliveryOrders> {
   SellerOrderController soController = Get.find<SellerOrderController>();
   SellerProfileController suController = Get.find<SellerProfileController>();
   SellerStoreController sellerStoreController = Get.find<SellerStoreController>();
@@ -36,9 +36,8 @@ class _RecentUsersState extends State<RecentUsers> {
   getData(){
     soController.onInit();
     soController.getOrders();
-    debugPrint("Orders ========+>${soController.instantDeliveryOrders}");
     if(!mounted) return;
-    setState(() {
+    /*setState(() {
       orders = soController.instantDeliveryOrders;
     });
     if(widget.orders.isEmpty){
@@ -50,8 +49,11 @@ class _RecentUsersState extends State<RecentUsers> {
       setState(() {
         orders = widget.orders;
       });
-    }
+    }*/
 
+    setState(() {
+      orders = soController.instantDeliveryOrders;
+    });
   }
 
   @override

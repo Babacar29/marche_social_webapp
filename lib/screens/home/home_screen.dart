@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       //key: context.read<MenuController>().scaffoldKey,
       //drawer: SideMenu(),
       //backgroundColor: bgColor,
