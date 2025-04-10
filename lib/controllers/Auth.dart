@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:marche_social_webapp/core/local_storage/sharedPrefs.dart';
 import 'package:marche_social_webapp/screens/home/home_screen.dart';
 
 import '../core/constants/app_collections.dart';
@@ -18,10 +19,11 @@ class AuthController extends GetxController{
 
   validateAndLoginWithEmail(BuildContext context) async   {
     try {
-      await auth.signInWithEmailAndPassword(
+      final _auth = await auth.signInWithEmailAndPassword(
           email: loginEmail.text,
           password: loginPassword.text
       );
+      //debugPrint("auth result ========+++>${_auth.credential!.accessToken}");
     } on FirebaseAuthException catch (e) {
       debugPrint("login exception =====>$e");
       auth.signOut();
@@ -41,14 +43,16 @@ class AuthController extends GetxController{
         DocumentSnapshot snap =
         await AppCollections.userCollection.doc(userId).get();
         UserModel userModel = UserModel.fromMap(snap);
+        SharedPreferencesServices service = SharedPreferencesServices();
 
         if (userModel.currentRole != null &&
             userModel.currentRole!.isNotEmpty &&
             (userModel.currentRole!) == 'admin' || (userModel.currentRole!) == "delivery_agent") {
           //Utils.hideProgressDialog();
-          Navigator.push(
+          service.setUserRoleInSharedPref(userModel.currentRole!);
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+            MaterialPageRoute(builder: (context) => HomeScreen())
           );
           //Get.offAll(() => HomeScreen());
         }

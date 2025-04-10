@@ -74,34 +74,65 @@ class UserModel {
 
   // Create a UserModel object from a map
   factory UserModel.fromMap(DocumentSnapshot map) {
-    late UserModel user = UserModel();
-    var documentData;
-    //debugPrint("map ===========++>${map.data()}");
-    if(map.data().toString() != "null"){
-      documentData = map.data() as Map<String, dynamic>;
-      String accessCodeAndInstructions = documentData.containsKey("accessCodeAndInstructions") ? map["accessCodeAndInstructions"] : "";
-      user = UserModel(
-        name: map['name'] ?? '',
-        email: map['email'] ?? '',
-        phoneNumber: map['phoneNumber'] ?? '',
-        userId: map['userId'] ?? '',
-        fcmToken: map['fcmToken'] ?? '',
-        profilePic: map['profilePic'] ?? '',
-        bio: map['bio'] ?? '',
-        country: map['country'] ?? '',
-        countryCode: map['countryCode'] ?? '',
-        state: map['state'] ?? '',
-        city: map['city'] ?? '',
-        address: map['address'] ?? '',
-        language: map['language']??'',
-        currentRole: map['currentRole'] ?? '',
-        addAddress: map['addAddress'] ?? '',
-        phoneNumberVerified: map['phoneNumberVerified'] ?? false,
-        profileCompleted: map['profileCompleted'] ?? false,
-        postalCode: map['postalCode'] ?? '',
-        accessCodeAndInstructions: accessCodeAndInstructions,
+    // Récupérer les données du document
+    final documentData = map.data() as Map<String, dynamic>?;
+
+    // Si les données sont null, retourner un UserModel avec des valeurs par défaut
+    if (documentData == null) {
+      return UserModel(
+        name: '',
+        email: '',
+        phoneNumber: '',
+        userId: '',
+        fcmToken: '',
+        profilePic: '',
+        bio: '',
+        country: '',
+        countryCode: '',
+        state: '',
+        city: '',
+        address: '',
+        language: '',
+        currentRole: '',
+        addAddress: '',
+        phoneNumberVerified: false,
+        profileCompleted: false,
+        postalCode: '',
+        accessCodeAndInstructions: '',
       );
     }
-    return user;
+
+    // Fonction helper pour récupérer un String en toute sécurité
+    String safeString(String key) {
+      return documentData.containsKey(key) ? (documentData[key] as String? ?? '') : '';
+    }
+
+    // Fonction helper pour récupérer un booléen en toute sécurité
+    bool safeBool(String key) {
+      return documentData.containsKey(key) ? (documentData[key] as bool? ?? false) : false;
+    }
+
+    // Construire et retourner l'instance de UserModel
+    return UserModel(
+      name: safeString('name'),
+      email: safeString('email'),
+      phoneNumber: safeString('phoneNumber'),
+      userId: documentData['userId'] as String? ?? '', // Cas spécial pour userId
+      fcmToken: safeString('fcmToken'),
+      profilePic: safeString('profilePic'),
+      bio: safeString('bio'),
+      country: safeString('country'),
+      countryCode: safeString('countryCode'),
+      state: safeString('state'),
+      city: safeString('city'),
+      address: safeString('address'),
+      language: safeString('language'),
+      currentRole: safeString('currentRole'),
+      addAddress: safeString('addAddress'),
+      phoneNumberVerified: safeBool('phoneNumberVerified'),
+      profileCompleted: safeBool('profileCompleted'),
+      postalCode: safeString('postalCode'),
+      accessCodeAndInstructions: safeString('accessCodeAndInstructions'),
+    );
   }
 }

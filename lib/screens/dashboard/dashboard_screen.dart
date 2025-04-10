@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/seller/seller_order_controller.dart';
 import '../../controllers/seller/seller_store_controller.dart';
 import '../../core/constants/app_collections.dart';
+import '../../core/local_storage/sharedPrefs.dart';
 import '../../models/store_model.dart';
 import '../../responsive.dart';
 import '../home/components/delivery_setting.dart';
@@ -31,6 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isDeliveredActive = false;
   bool isCancelledActive = false;
   bool isParamsActive = false;
+  final SharedPreferencesServices service = SharedPreferencesServices();
 
   Future<void> updateStoresValues() async{
     List<StoreModel> storeModels = await stController.getInstantDeliveryStores();
@@ -167,7 +169,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         isActive: isCancelledActive
                     ),
                     SizedBox(height: height/30,),
-                    buildTextButton(
+                    service.getUserRoleFromSharedPref() != "delivery_agent" ? const SizedBox() : buildTextButton(
                         text: "Paramètres",
                         onPressed: (){
                           setState(() {
@@ -256,7 +258,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           height: MediaQuery.sizeOf(context).height,
                           child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: isParamsActive ? const DeliverySetting() : const InstantDeliveryOrders()
+                              child: isParamsActive ? const DeliverySetupScreen() : const InstantDeliveryOrders()
                           ),
                         ),
                       ],

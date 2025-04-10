@@ -136,4 +136,64 @@ class Utils{
     // Check if the given postal code is in the list
     return allPostalCodes.contains(postalCode);
   }
+  List<String> allPostalCodes() {
+    List<String> parisPostalCodes = [
+      '75001', '75002', '75003', '75004', '75005', '75006', '75007', '75008',
+      '75009', '75010', '75011', '75012', '75013', '75014', '75015', '75016',
+      '75017', '75018', '75019', '75020', '75116'
+    ];
+
+    List<String> postalCodes91 = [
+      '91090', '91000', '91100', '91300', '91380', '91600', '91700', '91350',
+      '91130', '91700', '91260', '91210', '91170'
+    ];
+
+    List<String> postalCodes92 = [
+      '92100', '92000', '92130', '92600', '92700', '92400', '92500', '92160',
+      '92110', '92200', '92140', '92120', '92240', '92190', '92800', '92230',
+      '92270', '92310', '92320', '92250', '92170', '92260', '92210'
+    ];
+
+    List<String> postalCodes93 = [
+      '93100', '93170', '93200', '93206', '93210', '93284', '93300', '93310',
+      '93700', '93800', '93140', '93270', '93500', '93130', '93120', '93110',
+      '93260'
+    ];
+
+    List<String> postalCodes94 = [
+      '94000', '94010', '94012', '94160', '94400', '94200', '94300', '94800',
+      '94700', '94220'
+    ];
+
+    List<String> postalCodes95 = ['95100'];
+
+    // Combine all the lists into one for easy searching
+    List<String> allPostalCodes = []
+      ..addAll(parisPostalCodes)
+      ..addAll(postalCodes91)
+      ..addAll(postalCodes92)
+      ..addAll(postalCodes93)
+      ..addAll(postalCodes94)
+      ..addAll(postalCodes95);
+
+
+    return allPostalCodes;
+  }
+
+  void showCustomSnackBar(String title, String? message) {
+    Get.showSnackbar(
+        GetSnackBar(
+          backgroundColor: Colors.blueAccent,
+          message: message,
+          title: title,
+          duration: const Duration(seconds: 3),
+          snackStyle: SnackStyle.FLOATING,
+          margin: const EdgeInsets.all(20),
+          borderRadius: 10,
+          isDismissible: true,
+          dismissDirection: DismissDirection.horizontal,
+        )
+    );
+  }
+
 }

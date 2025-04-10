@@ -251,7 +251,7 @@ class BuyerProfileController extends GetxController {
       }
     }*/
 
-    UserModel? temp = await getSellerById(userId: uid);
+    UserModel? temp = await getBuyerById(userId: uid);
     if (temp != null) {
       buyerUserModel.value = temp;
       //
@@ -263,7 +263,7 @@ class BuyerProfileController extends GetxController {
     //debugPrint("store user data ===========>$sellerUserModel");
   }
 
-  Future<UserModel?> getSellerById({required String userId}) async {
+  Future<UserModel?> getBuyerById({required String userId}) async {
     try {
       if (userId.isEmpty) {
         return null;

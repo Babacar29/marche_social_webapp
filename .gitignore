@@ -12,6 +12,8 @@
 .firebaserc
 .scannerwork/
 .fvm
+.firebase
+.github
 
 
 # IntelliJ related
@@ -57,6 +59,8 @@ lib/constants/stripeConsts.dart
 # Web related
 #android/findme_key.jks
 assets/.env
+macos
+windows
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages

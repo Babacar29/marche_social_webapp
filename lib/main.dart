@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:marche_social_webapp/controllers/Auth.dart';
+import 'package:marche_social_webapp/controllers/deliver/deliver_controller.dart';
 import 'package:marche_social_webapp/controllers/seller/seller_order_controller.dart';
 import 'package:marche_social_webapp/core/constants/color_constants.dart';
 import 'package:marche_social_webapp/core/init/provider_list.dart';
@@ -12,6 +13,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'controllers/buyer/buyer_profile_controller.dart';
 import 'controllers/seller/seller_profile_controller.dart';
 import 'controllers/seller/seller_store_controller.dart';
+import 'core/local_storage/sharedPrefs.dart';
 import 'firebase_options.dart';
 
 void main() async{
@@ -19,11 +21,13 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await SharedPreferencesServices.init();
   Get.put(SellerOrderController());
   Get.put(SellerProfileController());
   Get.put(BuyerProfileController());
   Get.put(SellerStoreController());
   Get.put(AuthController());
+  Get.put(DeliverController());
   runApp(MyApp());
 }
 
