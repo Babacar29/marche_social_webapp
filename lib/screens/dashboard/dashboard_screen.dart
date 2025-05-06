@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:marche_social_webapp/controllers/buyer/buyer_profile_controller.dart';
 import 'package:marche_social_webapp/core/constants/color_constants.dart';
 import 'package:marche_social_webapp/core/utils/colorful_tag.dart';
 import 'package:marche_social_webapp/models/order_model.dart';
@@ -25,6 +27,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   SellerStoreController stController = Get.find<SellerStoreController>();
   SellerOrderController soController = Get.find<SellerOrderController>();
+  BuyerProfileController userController = Get.find<BuyerProfileController>();
   List<StoreModel> stores = [];
   List<OrderModel> orders = [];
   List<bool> storesCanDoInstantDelivery = [];
@@ -46,6 +49,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
       storesCanDoInstantDelivery.clear();
     }
+  }
+
+  String getUserCurrentRole(){
+    String currentUserRole = service.getUserRoleFromSharedPref();
+    return currentUserRole;
   }
 
   getInstantDeliveryStores() async{
@@ -102,6 +110,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     getInstantDeliveryStores();
     //getDefaultPendingOrders();
+    userController.getDeliverStatus(uid: FirebaseAuth.instance.currentUser?.uid ?? "");
     super.initState();
   }
 
@@ -198,7 +207,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         //const Header(),
                         //SizedBox(height: defaultPadding),
                         //MiniInformation(),
-                        Row(
+                        getUserCurrentRole() == "delivery_agent" ? Obx(
+                            () => Row(
+                              children: [
+                                if (!Responsive.isDesktop(context))
+                                  IconButton(
+                                    icon: const Icon(Icons.menu),
+                                    onPressed: () {},
+                                  ),
+                                IconButton(
+                                    onPressed: () async{
+                                      String userID = service.getUserIDFromSharedPref();
+                                      userController.updateDeliverAgentOnlineStatus(uid: userID, isOnline: !userController.isDeliverOnline.value);
+                                      userController.getDeliverStatus(uid: userID);
+                                    },
+                                    icon: Icon(Icons.power_settings_new_outlined, color:  userController.isDeliverOnline.value == true ? Colors.green : Colors.red, size: 25,)
+                                ),
+                                Text(
+                                  userController.isDeliverOnline.value == true ? "Activé" : "Désactivé",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const Spacer(),
+                                if (!Responsive.isMobile(context))
+                                  Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
+                                //Expanded(child: SearchField()),
+                                /*Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      buildInkWell(
+                                          text: "En cours",
+                                          onTap: (){
+                                            //search("Pending");
+                                          }
+                                      ),
+                                      buildInkWell(
+                                          text: "Pending",
+                                          onTap: (){
+                                            //search("");
+                                          }
+                                      ),
+                                      buildInkWell(
+                                          text: "Tout",
+                                          onTap: (){
+                                            soController.getOrders();
+                                          }
+                                      ),
+                                    ],
+                                  ),
+                                ),*/
+                                const SizedBox(width: 30,),
+                                const ProfileCard(),
+                                const SizedBox(width: 20,),
+                              ],
+                            )
+                        ) : Row(
                           children: [
                             if (!Responsive.isDesktop(context))
                               IconButton(
@@ -207,10 +270,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             IconButton(
                                 onPressed: () async{
-                                  await updateStoresValues().then((_){
-                                    getInstantDeliveryStores();
-                                    setState;
-                                  });
+                                  String currentUserRole = getUserCurrentRole();
+                                  String userID = service.getUserIDFromSharedPref();
+                                  if(currentUserRole == "admin"){
+                                    await updateStoresValues().then((_){
+                                      getInstantDeliveryStores();
+                                      setState;
+                                    });
+                                  }
                                 },
                                 icon: Icon(Icons.power_settings_new_outlined, color:  storesCanDoInstantDelivery.contains(true) ? Colors.red : Colors.green, size: 25,)
                             ),
@@ -255,7 +322,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(height: defaultPadding),
                         SizedBox(
                           width: MediaQuery.sizeOf(context).width * 1.5,
-                          height: MediaQuery.sizeOf(context).height,
+                          height: MediaQuery.sizeOf(context).height * 2,
                           child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: isParamsActive ? const DeliverySetupScreen() : const InstantDeliveryOrders()

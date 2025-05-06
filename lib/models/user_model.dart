@@ -7,6 +7,7 @@ class UserModel {
   String? phoneNumber;
   bool? phoneNumberVerified;
   bool? profileCompleted;
+  bool? isOnline;
   String? userId;
   String? gender;
   String? fcmToken;
@@ -45,6 +46,7 @@ class UserModel {
     this.currentRole,
     this.countryCode,
     this.accessCodeAndInstructions,
+    this.isOnline,
   });
 
   // Convert UserModel object to a map
@@ -69,6 +71,7 @@ class UserModel {
       'postalCode': postalCode ?? '',
       'addAddress': addAddress ?? '',
       'accessCodeAndInstructions': accessCodeAndInstructions ?? '',
+      'isOnline': isOnline ?? false,
     };
   }
 
@@ -99,6 +102,7 @@ class UserModel {
         profileCompleted: false,
         postalCode: '',
         accessCodeAndInstructions: '',
+        isOnline: false,
       );
     }
 
@@ -133,6 +137,7 @@ class UserModel {
       profileCompleted: safeBool('profileCompleted'),
       postalCode: safeString('postalCode'),
       accessCodeAndInstructions: safeString('accessCodeAndInstructions'),
+      isOnline: safeBool('isOnline'),
     );
   }
 }

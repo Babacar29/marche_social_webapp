@@ -240,7 +240,7 @@ class _InstantDeliveryOrdersState extends State<InstantDeliveryOrders> {
   DataRow recentUserDataRow(OrderModel orderInfo, BuildContext context, SellerProfileController sController, BuyerProfileController buyerController, SellerStoreController sellerStoreController) {
     //debugPrint("uid ==========>${orderInfo.cartItem!.storeOwnerId!}");
     sController.getStoreInfo(uid: orderInfo.cartItem!.storeOwnerId!);
-    buyerController.getBuyerInfo(uid: orderInfo.customerId!);
+    buyerController.getUserInfo(uid: orderInfo.customerId!, role: "buyer");
     sellerStoreController.getStoreInfo(ownerId: orderInfo.cartItem!.storeOwnerId ?? "");
     var storeData = sellerStoreController.storeModel.value;
     return DataRow(
@@ -270,12 +270,12 @@ class _InstantDeliveryOrdersState extends State<InstantDeliveryOrders> {
             //DateFormat("dd/MM/yy HH:mm").format(orderInfo.orderDate!), textAlign: TextAlign.center,
           ),
         ),
-        DataCell(Text("${sController.sellerUserModel.value.name}\n${sController.sellerUserModel.value.phoneNumber}\n\n${buyerController.buyerUserModel.value.name}\n${buyerController.buyerUserModel.value.phoneNumber}", textAlign: TextAlign.center,)),
+        DataCell(Text("${sController.sellerUserModel.value.name}\n${sController.sellerUserModel.value.phoneNumber}\n\n${buyerController.userModel.value.name}\n${buyerController.userModel.value.phoneNumber}", textAlign: TextAlign.center,)),
         DataCell(Text(orderInfo.cartItem!.productName!, textAlign: TextAlign.center,)),
         DataCell(Text("${sController.sellerUserModel.value.address}", textAlign: TextAlign.center,)),
         DataCell(Text("${sController.sellerUserModel.value.postalCode}", textAlign: TextAlign.center,)),
-        DataCell(Text("${buyerController.buyerUserModel.value.address}", textAlign: TextAlign.center,)),
-        DataCell(Text("${buyerController.buyerUserModel.value.postalCode}", textAlign: TextAlign.center,)),
+        DataCell(Text("${buyerController.userModel.value.address}", textAlign: TextAlign.center,)),
+        DataCell(Text("${buyerController.userModel.value.postalCode}", textAlign: TextAlign.center,)),
         DataCell(Text( orderInfo.shouldBeDeliveredInLetterBox == true ? "OUI" : "NON", textAlign: TextAlign.center,)),
         DataCell(Text(orderInfo.totalPrice!, textAlign: TextAlign.center,)),
         DataCell(Text(orderInfo.cartItem!.productPrice!, textAlign: TextAlign.center,)),

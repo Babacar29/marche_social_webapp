@@ -32,7 +32,7 @@ class AuthController extends GetxController{
           title: 'Authentication Error', msg: e.message.toString());
     }
 
-    debugPrint("current user ================>${auth.currentUser}");
+    //debugPrint("current user id ================>${auth.currentUser}");
     if (auth.currentUser != null) {
       //
       String userId = auth.currentUser!.uid.toString();
@@ -45,11 +45,13 @@ class AuthController extends GetxController{
         UserModel userModel = UserModel.fromMap(snap);
         SharedPreferencesServices service = SharedPreferencesServices();
 
+        //debugPrint("is online ==========>${userModel.currentRole}");
         if (userModel.currentRole != null &&
             userModel.currentRole!.isNotEmpty &&
             (userModel.currentRole!) == 'admin' || (userModel.currentRole!) == "delivery_agent") {
           //Utils.hideProgressDialog();
           service.setUserRoleInSharedPref(userModel.currentRole!);
+          service.setUserIDInSharedPref(userId);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen())

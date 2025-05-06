@@ -62,104 +62,83 @@ class DeliverController extends GetxController{
     }
   }
 
-  Future<void> saveDeliverAgentSchedulesToFirestore({required List<Zone> sellerZones, required List<Zone> buyerZones}) async {
+  Future<void> saveDeliverAgentSchedulesToFirestore({required List<Zone> sellerZones}) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    try{
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
-
+    try {
       final firestore = FirebaseFirestore.instance;
       final userDocRef = firestore.collection('users').doc(user.uid);
 
       // Vérifier si le document existe
       final docSnapshot = await userDocRef.get();
 
+      // Préparer les données à sauvegarder
+      final availabilityData = {
+        'zones': {
+          'seller_zone': sellerZones.map((z) => {
+            'code': z.code,
+            'slots': z.slots,
+            'buyer_zones': z.buyerZones.map((bz) => {
+              'code': bz.code,
+              'slots': bz.slots,
+            }).toList(),
+          }).toList(),
+        },
+      };
+
       if (docSnapshot.exists) {
         // Le document existe, on fait un update
         await userDocRef.update({
           'role': 'delivery_agent',
-          'availability': {
-            'zones': {
-              'seller_zone': sellerZones.map((z) => {
-                'code': z.code,
-                'slots': z.slots,
-              }).toList(),
-              'buyer_zone': buyerZones.map((z) => {
-                'code': z.code,
-                'slots': z.slots,
-              }).toList(),
-            },
-          },
-        }).then((_){
+          'availability': availabilityData,
+        }).then((_) {
           Utils().showCustomSnackBar("Top !!!", "Vos modifications ont été sauvegardées avec succès");
         });
       } else {
         // Le document n'existe pas, on le crée avec set
         await userDocRef.set({
           'role': 'delivery_agent',
-          'availability': {
-            'zones': {
-              'seller_zone': sellerZones.map((z) => {
-                'code': z.code,
-                'slots': z.slots,
-              }).toList(),
-              'buyer_zone': buyerZones.map((z) => {
-                'code': z.code,
-                'slots': z.slots,
-              }).toList(),
-            },
-          },
-        }).then((_){
+          'availability': availabilityData,
+        }).then((_) {
           Utils().showCustomSnackBar("Top !!!", "Vos modifications ont été sauvegardées avec succès");
         });
       }
-    }
-    catch (e){
+    } catch (e) {
       debugPrint("Upload data Exception ============>$e");
     }
   }
 
-  Future<void> fetchDeliveryZones() async {
-    // Vérifier si un utilisateur est connecté
+ Future<void> fetchDeliveryZones() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    // Référence au document de l'utilisateur dans Firestore
     final firestore = FirebaseFirestore.instance;
     final userDocRef = firestore.collection('users').doc(user.uid);
 
     try {
-      // Récupérer le document de l'utilisateur
       final docSnapshot = await userDocRef.get();
       if (docSnapshot.exists) {
-        // Extraire les données du document
         final data = docSnapshot.data();
         final availability = data?['availability'] as Map<String, dynamic>?;
         final zones = availability?['zones'] as Map<String, dynamic>?;
 
         if (zones != null) {
-          // Récupérer et convertir les sellerZones
           final sellerZonesData = zones['seller_zone'] as List<dynamic>? ?? [];
-          final sellerZonesList = sellerZonesData.map((zone) {
+          sellerZones.value = sellerZonesData.map((zone) {
+            final buyerZonesData = zone['buyer_zones'] as List<dynamic>? ?? [];
+            final buyerZonesList = buyerZonesData.map((bz) {
+              return BuyerZone(
+                bz['code'] as String,
+                List<String>.from(bz['slots'] ?? []),
+              );
+            }).toList();
             return Zone(
               zone['code'] as String,
               List<String>.from(zone['slots'] ?? []),
+              buyerZonesList,
             );
           }).toList();
-
-          // Récupérer et convertir les buyerZones
-          final buyerZonesData = zones['buyer_zone'] as List<dynamic>? ?? [];
-          final buyerZonesList = buyerZonesData.map((zone) {
-            return Zone(
-              zone['code'] as String,
-              List<String>.from(zone['slots'] ?? []),
-            );
-          }).toList();
-
-          sellerZones.value = sellerZonesList;
-          buyerZones.value = buyerZonesList;
         }
       } else {
         debugPrint("Le document de l'utilisateur n'existe pas.");
@@ -168,7 +147,6 @@ class DeliverController extends GetxController{
       debugPrint("Erreur lors de la récupération des données : $e");
     }
   }
-
 
   @override
   void onInit() {

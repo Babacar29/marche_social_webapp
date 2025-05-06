@@ -27,4 +27,16 @@ class SharedPreferencesServices {
     _prefs.remove("UserRole");
     _prefs.setString("UserRole", str);
   }
+
+  String getUserIDFromSharedPref() {
+    if (!_prefs.containsKey('UserID')) {
+      return '';
+    }
+    return _prefs.get('UserID').toString();
+  }
+
+  setUserIDInSharedPref(String str) {
+    _prefs.remove("UserID");
+    _prefs.setString("UserID", str);
+  }
 }

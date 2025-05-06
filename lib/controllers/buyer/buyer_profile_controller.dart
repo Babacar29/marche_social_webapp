@@ -6,10 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../core/constants/app_collections.dart';
+import '../../core/utils/Utils.dart';
 import '../../models/user_model.dart';
 
 class BuyerProfileController extends GetxController {
-  Rx<UserModel> buyerUserModel = UserModel().obs;
+  Rx<UserModel> userModel = UserModel().obs;
+  Rx<bool> isDeliverOnline = false.obs;
   StreamSubscription? userDataStream;
   TextEditingController name = TextEditingController();
   TextEditingController phone = TextEditingController();
@@ -35,7 +37,7 @@ class BuyerProfileController extends GetxController {
           .snapshots()
           .listen((event) {
         UserModel temp = UserModel.fromMap(event);
-        buyerUserModel.value = temp;
+        userModel.value = temp;
       });
     }
   }
@@ -47,24 +49,24 @@ class BuyerProfileController extends GetxController {
   }
 
   initData() {
-    name.text = buyerUserModel.value.name ?? '';
-    countryCode.value = buyerUserModel.value.countryCode ?? '+1';
-    phone.text = buyerUserModel.value.phoneNumber ?? '';
-    country.text = buyerUserModel.value.country ?? '';
-    city.text = buyerUserModel.value.city ?? '';
-    address.text = buyerUserModel.value.address ?? '';
-    addAddress.text = buyerUserModel.value.addAddress ?? '';
-    postalCode.text = buyerUserModel.value.postalCode ?? '';
+    name.text = userModel.value.name ?? '';
+    countryCode.value = userModel.value.countryCode ?? '+1';
+    phone.text = userModel.value.phoneNumber ?? '';
+    country.text = userModel.value.country ?? '';
+    city.text = userModel.value.city ?? '';
+    address.text = userModel.value.address ?? '';
+    addAddress.text = userModel.value.addAddress ?? '';
+    postalCode.text = userModel.value.postalCode ?? '';
     note.text = '';
     accessCodeAndInstructions.text = '';
   }
 
   initAddressData() {
-    country.text = buyerUserModel.value.country ?? '';
-    city.text = buyerUserModel.value.city ?? '';
-    address.text = buyerUserModel.value.address ?? '';
-    addAddress.text = buyerUserModel.value.addAddress ?? '';
-    postalCode.text = buyerUserModel.value.postalCode ?? '';
+    country.text = userModel.value.country ?? '';
+    city.text = userModel.value.city ?? '';
+    address.text = userModel.value.address ?? '';
+    addAddress.text = userModel.value.addAddress ?? '';
+    postalCode.text = userModel.value.postalCode ?? '';
   }
 
   Rx<File?> selectedFile = Rx<File?>(null);
@@ -125,7 +127,7 @@ class BuyerProfileController extends GetxController {
       Utils.showProgressDialog();
       if (selectedFile.value != null) {
         String? url = await uploadFileToFirebase(selectedFile.value!);
-        await AppCollections.userCollection.doc(buyerUserModel.value.userId).update({
+        await AppCollections.userCollection.doc(userModel.value.userId).update({
           'profilePic': url ?? '',
           'name': name.text,
           'phoneNumber': phone.text,
@@ -135,7 +137,7 @@ class BuyerProfileController extends GetxController {
           'bio': bio.text,
         });
       } else {
-        await AppCollections.userCollection.doc(buyerUserModel.value.userId).update({
+        await AppCollections.userCollection.doc(userModel.value.userId).update({
           'name': name.text,
           'phoneNumber': phone.text,
           'country': country.text,
@@ -165,16 +167,16 @@ class BuyerProfileController extends GetxController {
   }
 
   initDataForOrder() async {
-    name.text = buyerUserModel.value.name ?? '';
-    countryCode.value = buyerUserModel.value.countryCode ?? '+1';
-    phone.text = buyerUserModel.value.phoneNumber ?? '';
-    country.text = buyerUserModel.value.country ?? '';
-    city.text = buyerUserModel.value.city ?? '';
-    address.text = buyerUserModel.value.address ?? '';
-    bio.text = buyerUserModel.value.bio ?? '';
-    postalCode.text = buyerUserModel.value.postalCode ?? '';
-    addAddress.text = buyerUserModel.value.addAddress ?? '';
-    accessCodeAndInstructions.text = buyerUserModel.value.accessCodeAndInstructions ?? '';
+    name.text = userModel.value.name ?? '';
+    countryCode.value = userModel.value.countryCode ?? '+1';
+    phone.text = userModel.value.phoneNumber ?? '';
+    country.text = userModel.value.country ?? '';
+    city.text = userModel.value.city ?? '';
+    address.text = userModel.value.address ?? '';
+    bio.text = userModel.value.bio ?? '';
+    postalCode.text = userModel.value.postalCode ?? '';
+    addAddress.text = userModel.value.addAddress ?? '';
+    accessCodeAndInstructions.text = userModel.value.accessCodeAndInstructions ?? '';
     //Get.to(() => OtherDetails());
   }
 
@@ -186,7 +188,7 @@ class BuyerProfileController extends GetxController {
             msg: 'Please select country code for mobile number ');
         return;
       }
-      await AppCollections.userCollection.doc(buyerUserModel.value.userId).update({
+      await AppCollections.userCollection.doc(userModel.value.userId).update({
         'name': name.text,
         'phoneNumber': phone.text,
         'country': country.text,
@@ -215,7 +217,7 @@ class BuyerProfileController extends GetxController {
     if (buyerAddFormKey.currentState!.validate()) {
       try {
         Utils.showProgressDialog();
-        await AppCollections.userCollection.doc(buyerUserModel.value.userId).update({
+        await AppCollections.userCollection.doc(userModel.value.userId).update({
           'country': country.text,
           'city': city.text,
           'address': address.text,
@@ -239,7 +241,7 @@ class BuyerProfileController extends GetxController {
     }
   }*/
 
-  Future getBuyerInfo({required String uid}) async {
+  Future getUserInfo({required String uid, required String role}) async {
     /*if (FirebaseAuth.instance.currentUser != null) {
       UserModel? temp = await getSellerById(userId: uid);
       if (temp != null) {
@@ -251,26 +253,26 @@ class BuyerProfileController extends GetxController {
       }
     }*/
 
-    UserModel? temp = await getBuyerById(userId: uid);
+    UserModel? temp = await getBuyerById(userId: uid, role: role);
     if (temp != null) {
-      buyerUserModel.value = temp;
+      userModel.value = temp;
       //
       //getProducts();
     } else {
-      buyerUserModel.value = UserModel();
+      userModel.value = UserModel();
     }
 
     //debugPrint("store user data ===========>$sellerUserModel");
   }
 
-  Future<UserModel?> getBuyerById({required String userId}) async {
+  Future<UserModel?> getBuyerById({required String userId, required String role}) async {
     try {
       if (userId.isEmpty) {
         return null;
       }
       QuerySnapshot snap = await AppCollections.userCollection
           .where('userId', isEqualTo: userId)
-          .where('currentRole', isEqualTo: "buyer")
+          .where('currentRole', isEqualTo: role)
           .get();
       if (snap.docs.isEmpty) {
         return null;
@@ -281,10 +283,58 @@ class BuyerProfileController extends GetxController {
       UserModel storeModel = UserModel.fromMap(snap.docs.first);
       return storeModel;
     } on FirebaseException catch (e) {
-      print(e);
+      debugPrint("$e");
       return null;
     }
   }
+
+  updateDeliverAgentOnlineStatus({required String uid, required bool isOnline}) async {
+    try {
+      //Utils.showProgressDialog();
+      await AppCollections.userCollection.doc(uid).update({
+        'isOnline': isOnline,
+      });
+      //Utils.hideProgressDialog();
+      //Utils.hideProgressDialog();
+      /*Utils.showSuccessSnackbar(
+          title: 'Done',
+          msg: 'Status successfully updated'
+      );*/
+
+    } on FirebaseException catch (e) {
+      //Utils.hideProgressDialog();
+      Utils.showFailureSnackbar(
+          title: 'Server Error', msg: e.message.toString());
+    }
+  }
+
+
+  Future getDeliverStatus({required String uid}) async {
+    /*if (FirebaseAuth.instance.currentUser != null) {
+      UserModel? temp = await getSellerById(userId: uid);
+      if (temp != null) {
+        sellerUserModel.value = temp;
+        //
+        //getProducts();
+      } else {
+        sellerUserModel.value = UserModel();
+      }
+    }*/
+
+    UserModel? temp = await getBuyerById(userId: uid, role: "delivery_agent");
+    if (temp != null) {
+      isDeliverOnline.value = temp.isOnline ?? false;
+      //
+      //getProducts();
+    } else {
+      isDeliverOnline.value = false;
+    }
+
+    //debugPrint("store user data ===========>$sellerUserModel");
+  }
+
+
+
 
   @override
   void onInit() {

@@ -163,7 +163,7 @@ class _SearchFieldState extends State<SearchField> {
   void searchPending(String status) {
     soController.instantDeliveryOrders.value = soController.instantDeliveryOrders.where((order){
       sController.getStoreInfo(uid: order.cartItem!.storeOwnerId!);
-      buyerController.getBuyerInfo(uid: order.customerId!);
+      buyerController.getUserInfo(uid: order.customerId!, role: "buyer");
       sellerStoreController.getStoreInfo(ownerId: order.cartItem!.storeOwnerId ?? "");
       return order.orderStatus! == status;
     }).toList();
